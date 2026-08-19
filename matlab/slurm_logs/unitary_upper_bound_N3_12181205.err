@@ -1,0 +1,3 @@
+{Error using generate_results (line 42)
+channel_type must be 'unitary', 'channels', or 'pauli'.
+} 

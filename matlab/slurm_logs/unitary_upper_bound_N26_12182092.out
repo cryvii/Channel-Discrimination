@@ -1,0 +1,57 @@
+============================================================
+  Job: unitary_upper_bound_N26  (ID: 12182092)
+  Node: hpc-node266
+  Started: Wed Aug 19 14:23:31 CEST 2026
+  N: 26
+  RUN_ID: 20260819_142331_job12182092_unitary_upper_bound_N26
+  Raw dir: /home/u224567/MATLAB/SDP/3channel-final/results/raw/20260819_142331_job12182092_unitary_upper_bound_N26
+============================================================
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2025 The MathWorks, Inc.
+             R2025b Update 4 (25.2.0.3150157) 64-bit (glnxa64)
+                              January 28, 2026
+
+ 
+To get started, type doc.
+For product information, visit www.mathworks.com.
+ 
+generate_results running from: /home/u224567/MATLAB/SDP/3channel-final/matlab/generate_results
+cfg.commuting = 0
+[Warning: Function narginchk has the same name as a MATLAB built-in. We suggest
+you rename the function to avoid a potential name conflict.] 
+[> In path (line 109)
+In addpath (line 96)
+In generate_results (line 53)] 
+[Warning: Function narginchk has the same name as a MATLAB built-in. We suggest
+you rename the function to avoid a potential name conflict.] 
+[> In path (line 109)
+In addpath (line 96)
+In generate_results (line 54)] 
+
+========================================================================
+generate_results
+========================================================================
+Protocols    : PAR, SEQ, pQC-CC, QC-SupFO, QC-QC, GEN
+N range      : 26 .. 26
+n_samples    : 50
+channel_type : channels
+channels     : diff
+run_id       : 20260819_142331_job12182092_unitary_upper_bound_N26
+save to      : /home/u224567/MATLAB/SDP/3channel-final/results/raw/20260819_142331_job12182092_unitary_upper_bound_N26
+========================================================================
+
+--- channels | diff ---
+
+C3(1) vs C3(2) diff: 3.120691e+00
+commuting = 0
+N=26 s=1/50 [channels|diff]
+  PAR        p=0.275976 t=136.7s [Solved]
+  SEQ        p=0.282121 t=410.8s [Solved]
+  pQC-CC     p=0.282121 t=853.8s [Solved]
+  QC-SupFO   p=0.289939 t=143.9s [Solved]
+  QC-QC      p=0.290010 t=163.9s [Solved]
+  GEN        p=0.290137 t=42.5s [Solved]
+
+C3(1) vs C3(2) diff: 3.080387e+00
+commuting = 0

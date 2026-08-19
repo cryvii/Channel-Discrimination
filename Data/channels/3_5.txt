@@ -1,0 +1,45 @@
+N= 3 s=1/5 [channels|diff]
+  # source=unitary_upper_bound_N3_12181207.out job_id=12181207 run_id=20260819_104029_job12181207_unitary_upper_bound_N3 orig_s=1/5
+  PAR        p=0.857281 t=17.5s [Solved]
+  SEQ        p=0.875322 t=60.9s [Solved]
+  pQC-CC     p=0.875322 t=118.1s [Solved]
+  QC-SupFO   p=0.880258 t=22.4s [Solved]
+  QC-QC      p=0.880374 t=25.6s [Solved]
+  GEN        p=0.881132 t=5.7s [Solved]
+
+N= 3 s=2/5 [channels|diff]
+  # source=unitary_upper_bound_N3_12181207.out job_id=12181207 run_id=20260819_104029_job12181207_unitary_upper_bound_N3 orig_s=2/5
+  PAR        p=0.885812 t=17.6s [Solved]
+  SEQ        p=0.913990 t=63.9s [Solved]
+  pQC-CC     p=0.913990 t=143.3s [Solved]
+  QC-SupFO   p=0.921073 t=20.8s [Solved]
+  QC-QC      p=0.921264 t=24.0s [Solved]
+  GEN        p=0.922514 t=5.3s [Solved]
+
+N= 3 s=3/5 [channels|diff]
+  # source=unitary_upper_bound_N3_12181207.out job_id=12181207 run_id=20260819_104029_job12181207_unitary_upper_bound_N3 orig_s=3/5
+  PAR        p=0.816848 t=21.7s [Solved]
+  SEQ        p=0.836411 t=65.5s [Solved]
+  pQC-CC     p=0.836411 t=143.4s [Solved]
+  QC-SupFO   p=0.845338 t=23.7s [Solved]
+  QC-QC      p=0.845579 t=23.8s [Solved]
+  GEN        p=0.847015 t=5.7s [Solved]
+
+N= 3 s=4/5 [channels|diff]
+  # source=unitary_upper_bound_N3_12181207.out job_id=12181207 run_id=20260819_104029_job12181207_unitary_upper_bound_N3 orig_s=4/5
+  PAR        p=0.827624 t=14.6s [Solved]
+  SEQ        p=0.842876 t=56.9s [Solved]
+  pQC-CC     p=0.842876 t=118.6s [Solved]
+  QC-SupFO   p=0.850764 t=23.6s [Solved]
+  QC-QC      p=0.851017 t=23.7s [Solved]
+  GEN        p=0.852533 t=6.2s [Solved]
+
+N= 3 s=5/5 [channels|diff]
+  # source=unitary_upper_bound_N3_12181207.out job_id=12181207 run_id=20260819_104029_job12181207_unitary_upper_bound_N3 orig_s=5/5
+  PAR        p=0.815097 t=14.6s [Solved]
+  SEQ        p=0.835040 t=61.4s [Solved]
+  pQC-CC     p=0.835181 t=133.8s [Solved]
+  QC-SupFO   p=0.843711 t=18.7s [Solved]
+  QC-QC      p=0.844016 t=22.0s [Solved]
+  GEN        p=0.845701 t=6.6s [Solved]
+

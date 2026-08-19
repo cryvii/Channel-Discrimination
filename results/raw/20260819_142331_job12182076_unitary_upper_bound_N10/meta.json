@@ -1,0 +1,17 @@
+{
+  "run_id": "20260819_142331_job12182076_unitary_upper_bound_N10",
+  "job_id": "12182076",
+  "node": "hpc-node261",
+  "protocols": [1, 2, 5, 6, 8, 9],
+  "proto_labels": ["PAR", "SEQ", "pQC-CC", "QC-SupFO", "QC-QC", "GEN"],
+  "N_start": 10,
+  "N_max": 10,
+  "n_samples": 50,
+  "channel_type": "channels",
+  "channels": "diff",
+  "commuting": 0,
+  "prior": "uniform",
+  "seed": "random",
+  "seed_used": 239204358,
+  "source": "generate_results.m"
+}

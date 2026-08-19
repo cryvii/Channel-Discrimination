@@ -1,0 +1,100 @@
+============================================================
+  Job: unitary_upper_bound_N2  (ID: 12178093)
+  Node: hpc-node126
+  Started: Tue Aug 18 14:54:06 CEST 2026
+  N: 2
+  RUN_ID: 20260818_145406_job12178093_unitary_upper_bound_N2
+  Raw dir: /home/u224567/MATLAB/SDP/3channel-final/results/raw/20260818_145406_job12178093_unitary_upper_bound_N2
+============================================================
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2025 The MathWorks, Inc.
+             R2025b Update 4 (25.2.0.3150157) 64-bit (glnxa64)
+                              January 28, 2026
+
+ 
+To get started, type doc.
+For product information, visit www.mathworks.com.
+ 
+cfg.commuting = 0
+[Warning: Function narginchk has the same name as a MATLAB built-in. We suggest
+you rename the function to avoid a potential name conflict.] 
+[> In path (line 109)
+In addpath (line 96)
+In generate_results (line 44)] 
+[Warning: Function narginchk has the same name as a MATLAB built-in. We suggest
+you rename the function to avoid a potential name conflict.] 
+[> In path (line 109)
+In addpath (line 96)
+In generate_results (line 45)] 
+
+========================================================================
+generate_results
+========================================================================
+Protocols    : PAR, SEQ, pQC-CC, QC-SupFO, QC-QC, GEN
+N range      : 2 .. 2
+n_samples    : 5
+channel_type : unitary
+unitary_mode : diff
+run_id       : 20260818_145406_job12178093_unitary_upper_bound_N2
+save to      : /home/u224567/MATLAB/SDP/3channel-final/results/raw/20260818_145406_job12178093_unitary_upper_bound_N2
+========================================================================
+
+--- unitary | diff ---
+
+C3(1) vs C3(2) diff: 1.131330e+01
+commuting = 0
+N= 2 s=1/5 [unitary|diff]
+  PAR        p=1.000000 t=6.2s [Solved]
+  SEQ        p=1.000000 t=19.0s [Solved]
+  pQC-CC     p=1.000000 t=43.2s [Solved]
+  QC-SupFO   p=1.000000 t=7.8s [Solved]
+  QC-QC      p=1.000000 t=7.7s [Solved]
+  GEN        p=1.000000 t=2.3s [Solved]
+
+C3(1) vs C3(2) diff: 1.131073e+01
+commuting = 0
+N= 2 s=2/5 [unitary|diff]
+  PAR        p=1.000000 t=6.2s [Solved]
+  SEQ        p=1.000000 t=19.5s [Solved]
+  pQC-CC     p=1.000000 t=48.2s [Solved]
+  QC-SupFO   p=1.000000 t=8.9s [Solved]
+  QC-QC      p=1.000000 t=8.9s [Solved]
+  GEN        p=1.000000 t=2.2s [Solved]
+
+C3(1) vs C3(2) diff: 1.100075e+01
+commuting = 0
+N= 2 s=3/5 [unitary|diff]
+  PAR        p=1.000000 t=7.2s [Solved]
+  SEQ        p=1.000000 t=21.7s [Solved]
+  pQC-CC     p=1.000000 t=43.0s [Solved]
+  QC-SupFO   p=1.000000 t=7.8s [Solved]
+  QC-QC      p=1.000000 t=11.5s [Solved]
+  GEN        p=1.000000 t=2.6s [Solved]
+
+C3(1) vs C3(2) diff: 1.129001e+01
+commuting = 0
+N= 2 s=4/5 [unitary|diff]
+  PAR        p=1.000000 t=6.2s [Solved]
+  SEQ        p=1.000000 t=18.3s [Solved]
+  pQC-CC     p=1.000000 t=43.0s [Solved]
+  QC-SupFO   p=1.000000 t=8.9s [Solved]
+  QC-QC      p=1.000000 t=8.9s [Solved]
+  GEN        p=1.000000 t=2.2s [Solved]
+
+C3(1) vs C3(2) diff: 1.127993e+01
+commuting = 0
+N= 2 s=5/5 [unitary|diff]
+  PAR        p=1.000000 t=6.2s [Solved]
+  SEQ        p=1.000000 t=21.7s [Solved]
+  pQC-CC     p=1.000000 t=48.4s [Solved]
+  QC-SupFO   p=1.000000 t=7.8s [Solved]
+  QC-QC      p=1.000000 t=11.5s [Solved]
+  GEN        p=1.000000 t=2.6s [Solved]
+
+Saved results + channels for mode: diff (.mat and .txt formats)
+
+
+=== DONE ===
+RUN_ID:20260818_145406_job12178093_unitary_upper_bound_N2
+MATLAB finished: Tue Aug 18 15:02:20 CEST 2026  |  exit code: 0

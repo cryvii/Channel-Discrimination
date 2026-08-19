@@ -1,0 +1,23 @@
+============================================================
+  Job: unitary_upper_bound_N2  (ID: 12181204)
+  Node: hpc-node044
+  Started: Wed Aug 19 10:35:40 CEST 2026
+  N: 2
+  RUN_ID: 20260819_103540_job12181204_unitary_upper_bound_N2
+  Raw dir: /home/u224567/MATLAB/SDP/3channel-final/results/raw/20260819_103540_job12181204_unitary_upper_bound_N2
+============================================================
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2025 The MathWorks, Inc.
+             R2025b Update 4 (25.2.0.3150157) 64-bit (glnxa64)
+                              January 28, 2026
+
+ 
+To get started, type doc.
+For product information, visit www.mathworks.com.
+ 
+generate_results running from: /home/u224567/MATLAB/SDP/3channel-final/matlab/generate_results
+cfg.commuting = 0
+>> MATLAB finished: Wed Aug 19 10:36:09 CEST 2026  |  exit code: 0
+WARNING: expected raw run dir /home/u224567/MATLAB/SDP/3channel-final/results/raw/20260819_103540_job12181204_unitary_upper_bound_N2 not found; skipping processing.
+Finished: Wed Aug 19 10:36:09 CEST 2026

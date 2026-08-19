@@ -1,0 +1,45 @@
+N= 2 s=1/5 [channels|diff]
+  # source=unitary_upper_bound_N2_12181206.out job_id=12181206 run_id=20260819_104029_job12181206_unitary_upper_bound_N2 orig_s=1/5
+  PAR        p=0.942976 t=17.5s [Solved]
+  SEQ        p=0.960041 t=46.2s [Solved]
+  pQC-CC     p=0.960041 t=98.8s [Solved]
+  QC-SupFO   p=0.960768 t=17.6s [Solved]
+  QC-QC      p=0.960799 t=20.2s [Solved]
+  GEN        p=0.961013 t=4.5s [Solved]
+
+N= 2 s=2/5 [channels|diff]
+  # source=unitary_upper_bound_N2_12181206.out job_id=12181206 run_id=20260819_104029_job12181206_unitary_upper_bound_N2 orig_s=2/5
+  PAR        p=0.921111 t=15.7s [Solved]
+  SEQ        p=0.930324 t=46.7s [Solved]
+  pQC-CC     p=0.930324 t=93.4s [Solved]
+  QC-SupFO   p=0.933606 t=17.7s [Solved]
+  QC-QC      p=0.933650 t=18.9s [Solved]
+  GEN        p=0.933914 t=4.5s [Solved]
+
+N= 2 s=3/5 [channels|diff]
+  # source=unitary_upper_bound_N2_12181206.out job_id=12181206 run_id=20260819_104029_job12181206_unitary_upper_bound_N2 orig_s=3/5
+  PAR        p=0.939121 t=15.0s [Solved]
+  SEQ        p=0.953444 t=44.7s [Solved]
+  pQC-CC     p=0.953444 t=93.8s [Solved]
+  QC-SupFO   p=0.956923 t=18.6s [Solved]
+  QC-QC      p=0.957034 t=17.5s [Solved]
+  GEN        p=0.957754 t=4.2s [Solved]
+
+N= 2 s=4/5 [channels|diff]
+  # source=unitary_upper_bound_N2_12181206.out job_id=12181206 run_id=20260819_104029_job12181206_unitary_upper_bound_N2 orig_s=4/5
+  PAR        p=0.894439 t=11.9s [Solved]
+  SEQ        p=0.905620 t=42.8s [Solved]
+  pQC-CC     p=0.905620 t=93.6s [Solved]
+  QC-SupFO   p=0.907353 t=18.9s [Solved]
+  QC-QC      p=0.907464 t=17.5s [Solved]
+  GEN        p=0.908010 t=4.2s [Solved]
+
+N= 2 s=5/5 [channels|diff]
+  # source=unitary_upper_bound_N2_12181206.out job_id=12181206 run_id=20260819_104029_job12181206_unitary_upper_bound_N2 orig_s=5/5
+  PAR        p=0.927636 t=17.2s [Solved]
+  SEQ        p=0.940021 t=45.2s [Solved]
+  pQC-CC     p=0.940021 t=98.7s [Solved]
+  QC-SupFO   p=0.940889 t=20.1s [Solved]
+  QC-QC      p=0.940954 t=18.8s [Solved]
+  GEN        p=0.941140 t=4.5s [Solved]
+

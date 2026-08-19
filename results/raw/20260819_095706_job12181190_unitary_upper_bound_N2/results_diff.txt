@@ -1,0 +1,14 @@
+============================================================
+Simulation Results Summary
+Run ID      : 20260819_095706_job12181190_unitary_upper_bound_N2
+Channel Type: unitary
+Mode        : diff
+============================================================
+
+--- AVERAGE SUCCESS PROBABILITIES ---
+N    	PAR         	SEQ         	pQC-CC      	QC-SupFO    	QC-QC       	GEN         
+2    	  1.00000000	  1.00000000	  1.00000000	  1.00000000	  1.00000000	  1.00000000
+
+--- AVERAGE COMPUTATION TIMES (seconds) ---
+N    	PAR         	SEQ         	pQC-CC      	QC-SupFO    	QC-QC       	GEN         
+2    	      6.3198	     20.0442	     39.0800	      8.1479	      8.3841	      2.3055

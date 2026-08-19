@@ -1,0 +1,4 @@
+{Error using generate_results (line 27)
+'channels' is not a recognized parameter. For a list of valid name-value pair
+arguments, see the documentation for this function.
+} 

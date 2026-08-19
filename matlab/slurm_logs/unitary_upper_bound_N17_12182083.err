@@ -1,0 +1,55 @@
+MathWorksServiceHost: ../nptl/pthread_mutex_lock.c:81: __pthread_mutex_lock: Assertion `mutex->__data.__owner == 0' failed.
+
+------------------------------------------------------------------------
+              abort() detected at Wed Aug 19 14:27:41 2026
+------------------------------------------------------------------------
+Architecture     : glnxa64
+Processor ID     : AMD EPYC 7452 32-Core Processor
+Host Name        : hpc-node427
+Locale           : en_US
+
+
+Abnormal termination:
+abort()
+
+Current Thread: 'FTP_2_6' id 23454473697024
+
+Register State (from fault):
+  RAX = 0000000000000000  RBX = 0000000000000006
+  RCX = 0000155554546acf  RDX = 0000000000000000
+  RSP = 00001554eb929b60  RBP = 0000155554681e88
+  RSI = 00001554eb929b60  RDI = 0000000000000002
+
+   R8 = 0000000000000000   R9 = 00001554eb929b60
+  R10 = 0000000000000008  R11 = 0000000000000246
+  R12 = 0000155554b1a1f5  R13 = 0000155554b1a212
+  R14 = 0000000000000051  R15 = 00001554eb929ed0
+
+  RIP = 0000155554546acf  EFL = 0000000000000246
+
+   CS = 0033   FS = 0000   GS = 0000
+
+Stack Trace (from fault):
+[  0] 0x0000155554546acf                                   /lib64/libc.so.6+00322255 gsignal+00000271
+[  1] 0x0000155554519ea5                                   /lib64/libc.so.6+00138917 abort+00000295
+[  2] 0x0000155554519d79                                   /lib64/libc.so.6+00138617
+[  3] 0x000015555453f426                                   /lib64/libc.so.6+00291878
+[  4] 0x0000155554b0fcc1                             /lib64/libpthread.so.0+00044225 __pthread_mutex_lock+00000577
+[  5] 0x00001554ec43a653 /home/u224567/.MathWorks/ServiceHost/-mw_shared_installs/v2025.13.0.5/bin/glnxa64/spf/serviceproviders/login/spf/matlabloginserviceprovider/libmwmatlabloginserviceprovider.so+00517715
+[  6] 0x00001554ec43a891 /home/u224567/.MathWorks/ServiceHost/-mw_shared_installs/v2025.13.0.5/bin/glnxa64/spf/serviceproviders/login/spf/matlabloginserviceprovider/libmwmatlabloginserviceprovider.so+00518289
+[  7] 0x000015554ccfbc59 /home/u224567/.MathWorks/ServiceHost/-mw_shared_installs/v2025.13.0.5/bin/glnxa64/spf/servicepublishers/agent/spf/legacyservicepublisher/../../../../../../../bin/glnxa64/libmwagentspflegacyservicewrapper.so+00207961
+[  8] 0x000015554ccfc049 /home/u224567/.MathWorks/ServiceHost/-mw_shared_installs/v2025.13.0.5/bin/glnxa64/spf/servicepublishers/agent/spf/legacyservicepublisher/../../../../../../../bin/glnxa64/libmwagentspflegacyservicewrapper.so+00208969
+[  9] 0x000015554ccfc0b4 /home/u224567/.MathWorks/ServiceHost/-mw_shared_installs/v2025.13.0.5/bin/glnxa64/spf/servicepublishers/agent/spf/legacyservicepublisher/../../../../../../../bin/glnxa64/libmwagentspflegacyservicewrapper.so+00209076
+[ 10] 0x000015554ed82d07 /home/u224567/.MathWorks/ServiceHost/-mw_shared_installs/v2025.13.0.5/bin/glnxa64/mathworksservicehost/rcf/matlabconnector/serviceprocess/rcf/client-v1/../../../../../../../../bin/glnxa64/libmwagentspfcore.so+00126215 _ZNK5agent3spf4core16ExportedFunctionclEN10foundation10concurrent10threadpool10stop_tokenEONS1_14GenericPayloadE+00000711
+[ 11] 0x000015554ccef176 /home/u224567/.MathWorks/ServiceHost/-mw_shared_installs/v2025.13.0.5/bin/glnxa64/spf/servicepublishers/agent/spf/legacyservicepublisher/../../../../../../../bin/glnxa64/libmwagentspflegacyservicewrapper.so+00156022
+[ 12] 0x000015554ccef201 /home/u224567/.MathWorks/ServiceHost/-mw_shared_installs/v2025.13.0.5/bin/glnxa64/spf/servicepublishers/agent/spf/legacyservicepublisher/../../../../../../../bin/glnxa64/libmwagentspflegacyservicewrapper.so+00156161
+[ 13] 0x000015554cc3f6d3 /home/u224567/.MathWorks/ServiceHost/-mw_shared_installs/v2025.13.0.5/bin/glnxa64/spf/servicepublishers/agent/spf/legacyservicepublisher/../../../../../../../bin/glnxa64/libmwagentnanomsgtransport.so+00108243
+[ 14] 0x000015555405f375 /home/u224567/.MathWorks/ServiceHost/-mw_shared_installs/v2025.13.0.5/bin/glnxa64/libmwfoundation_threadpool.so+00152437
+[ 15] 0x0000155554067a34 /home/u224567/.MathWorks/ServiceHost/-mw_shared_installs/v2025.13.0.5/bin/glnxa64/libmwfoundation_threadpool.so+00186932
+[ 16] 0x0000155554068094 /home/u224567/.MathWorks/ServiceHost/-mw_shared_installs/v2025.13.0.5/bin/glnxa64/libmwfoundation_threadpool.so+00188564
+[ 17] 0x00001555549bc8c3 /home/u224567/.MathWorks/ServiceHost/-mw_shared_installs/v2025.13.0.5/bin/glnxa64/../../sys/os/glnxa64/libstdc++.so.6+00903363
+[ 18] 0x0000155554b0d1ca                             /lib64/libpthread.so.0+00033226
+[ 19] 0x0000155554531e73                                   /lib64/libc.so.6+00237171 clone+00000067
+
+
+** This crash report has been written to /home/u224567/.MathWorks/ServiceHost/hpc-node427/logs/MathWorksServiceHost_crash_30338.log **

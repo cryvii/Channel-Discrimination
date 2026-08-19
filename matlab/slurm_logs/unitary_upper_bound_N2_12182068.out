@@ -1,0 +1,147 @@
+============================================================
+  Job: unitary_upper_bound_N2  (ID: 12182068)
+  Node: hpc-node026
+  Started: Wed Aug 19 14:23:31 CEST 2026
+  N: 2
+  RUN_ID: 20260819_142331_job12182068_unitary_upper_bound_N2
+  Raw dir: /home/u224567/MATLAB/SDP/3channel-final/results/raw/20260819_142331_job12182068_unitary_upper_bound_N2
+============================================================
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2025 The MathWorks, Inc.
+             R2025b Update 4 (25.2.0.3150157) 64-bit (glnxa64)
+                              January 28, 2026
+
+ 
+To get started, type doc.
+For product information, visit www.mathworks.com.
+ 
+generate_results running from: /home/u224567/MATLAB/SDP/3channel-final/matlab/generate_results
+cfg.commuting = 0
+[Warning: Function narginchk has the same name as a MATLAB built-in. We suggest
+you rename the function to avoid a potential name conflict.] 
+[> In path (line 109)
+In addpath (line 96)
+In generate_results (line 53)] 
+[Warning: Function narginchk has the same name as a MATLAB built-in. We suggest
+you rename the function to avoid a potential name conflict.] 
+[> In path (line 109)
+In addpath (line 96)
+In generate_results (line 54)] 
+
+========================================================================
+generate_results
+========================================================================
+Protocols    : PAR, SEQ, pQC-CC, QC-SupFO, QC-QC, GEN
+N range      : 2 .. 2
+n_samples    : 50
+channel_type : channels
+channels     : diff
+run_id       : 20260819_142331_job12182068_unitary_upper_bound_N2
+save to      : /home/u224567/MATLAB/SDP/3channel-final/results/raw/20260819_142331_job12182068_unitary_upper_bound_N2
+========================================================================
+
+--- channels | diff ---
+
+C3(1) vs C3(2) diff: 2.172410e+00
+commuting = 0
+N= 2 s=1/50 [channels|diff]
+  PAR        p=0.892910 t=18.1s [Solved]
+  SEQ        p=0.895860 t=43.1s [Solved]
+  pQC-CC     p=0.895860 t=96.3s [Solved]
+  QC-SupFO   p=0.898195 t=17.1s [Solved]
+  QC-QC      p=0.898216 t=15.9s [Solved]
+  GEN        p=0.898548 t=4.1s [Solved]
+
+C3(1) vs C3(2) diff: 3.010794e+00
+commuting = 0
+N= 2 s=2/50 [channels|diff]
+  PAR        p=0.911659 t=12.6s [Solved]
+  SEQ        p=0.916938 t=42.0s [Solved]
+  pQC-CC     p=0.916938 t=91.5s [Solved]
+  QC-SupFO   p=0.920314 t=17.1s [Solved]
+  QC-QC      p=0.920372 t=19.6s [Solved]
+  GEN        p=0.920963 t=4.4s [Solved]
+
+C3(1) vs C3(2) diff: 2.846221e+00
+commuting = 0
+N= 2 s=3/50 [channels|diff]
+  PAR        p=0.937088 t=18.4s [Solved]
+  SEQ        p=0.941433 t=43.5s [Solved]
+  pQC-CC     p=0.941949 t=96.1s [Solved]
+  QC-SupFO   p=0.943256 t=14.6s [Solved]
+  QC-QC      p=0.943343 t=18.4s [Solved]
+  GEN        p=0.943590 t=4.2s [Solved]
+
+C3(1) vs C3(2) diff: 2.702985e+00
+commuting = 0
+N= 2 s=4/50 [channels|diff]
+  PAR        p=0.913362 t=11.7s [Solved]
+  SEQ        p=0.922861 t=41.6s [Solved]
+  pQC-CC     p=0.922861 t=72.6s [Solved]
+  QC-SupFO   p=0.926033 t=16.0s [Solved]
+  QC-QC      p=0.926110 t=14.6s [Solved]
+  GEN        p=0.926563 t=4.1s [Solved]
+
+C3(1) vs C3(2) diff: 2.901418e+00
+commuting = 0
+N= 2 s=5/50 [channels|diff]
+  PAR        p=0.922358 t=10.5s [Solved]
+  SEQ        p=0.937155 t=42.0s [Solved]
+  pQC-CC     p=0.937155 t=78.9s [Solved]
+  QC-SupFO   p=0.940832 t=17.1s [Solved]
+  QC-QC      p=0.940885 t=17.2s [Solved]
+  GEN        p=0.941472 t=4.1s [Solved]
+
+C3(1) vs C3(2) diff: 2.952218e+00
+commuting = 0
+N= 2 s=6/50 [channels|diff]
+  PAR        p=0.929858 t=9.5s [Solved]
+  SEQ        p=0.942115 t=41.0s [Solved]
+  pQC-CC     p=0.942115 t=90.0s [Solved]
+  QC-SupFO   p=0.947782 t=16.1s [Solved]
+  QC-QC      p=0.947845 t=15.9s [Solved]
+  GEN        p=0.948456 t=4.1s [Solved]
+
+C3(1) vs C3(2) diff: 2.756586e+00
+commuting = 0
+N= 2 s=7/50 [channels|diff]
+  PAR        p=0.932214 t=10.4s [Solved]
+  SEQ        p=0.941745 t=43.1s [Solved]
+  pQC-CC     p=0.941745 t=90.4s [Solved]
+  QC-SupFO   p=0.946184 t=17.1s [Solved]
+  QC-QC      p=0.946259 t=17.1s [Solved]
+  GEN        p=0.946853 t=4.4s [Solved]
+
+C3(1) vs C3(2) diff: 2.535113e+00
+commuting = 0
+N= 2 s=8/50 [channels|diff]
+  PAR        p=0.923364 t=11.5s [Solved]
+  SEQ        p=0.927556 t=43.6s [Solved]
+  pQC-CC     p=0.927556 t=107.2s [Solved]
+  QC-SupFO   p=0.930590 t=18.4s [Solved]
+  QC-QC      p=0.930623 t=18.5s [Solved]
+  GEN        p=0.930922 t=4.1s [Solved]
+
+C3(1) vs C3(2) diff: 2.110331e+00
+commuting = 0
+N= 2 s=9/50 [channels|diff]
+  PAR        p=0.871697 t=15.4s [Solved]
+  SEQ        p=0.883223 t=43.5s [Solved]
+  pQC-CC     p=0.883240 t=113.4s [Solved]
+  QC-SupFO   p=0.886419 t=16.0s [Solved]
+  QC-QC      p=0.886515 t=18.5s [Solved]
+  GEN        p=0.886835 t=4.1s [Solved]
+
+C3(1) vs C3(2) diff: 2.894595e+00
+commuting = 0
+N= 2 s=10/50 [channels|diff]
+  PAR        p=0.903891 t=9.7s [Solved]
+  SEQ        p=0.913691 t=39.9s [Solved]
+  pQC-CC     p=0.913691 t=90.0s [Solved]
+  QC-SupFO   p=0.917265 t=15.8s [Solved]
+  QC-QC      p=0.917363 t=15.7s [Solved]
+  GEN        p=0.917964 t=4.2s [Solved]
+
+C3(1) vs C3(2) diff: 2.884196e+00
+commuting = 0

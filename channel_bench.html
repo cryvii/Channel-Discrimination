@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Channel Bench — Separation Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg: #f5f6f8;
+    --panel: #ffffff;
+    --panel-2: #f0f1f4;
+    --border: #d8dce3;
+    --border-soft: #e3e6eb;
+    --text: #1b1f27;
+    --text-dim: #5b6472;
+    --text-dimmer: #9aa2b0;
+    --accent: #c97a00;
+    --accent-soft: rgba(201,122,0,0.12);
+    --accent-2: #1f9e97;
+    --danger: #d43f5f;
+    --mono: 'IBM Plex Mono', ui-monospace, monospace;
+    --sans: 'Inter', -apple-system, sans-serif;
+    --radius: 3px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse at 20% -10%, rgba(201,122,0,0.05), transparent 45%),
+      radial-gradient(ellipse at 90% 110%, rgba(31,158,151,0.05), transparent 45%),
+      var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    min-height:100vh;
+  }
+  ::selection{ background:var(--accent-soft); color:var(--accent); }
+
+  /* ---------- header ---------- */
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 28px;
+    border-bottom:1px solid var(--border-soft);
+    background:linear-gradient(180deg, rgba(0,0,0,0.015), transparent);
+  }
+  .brand{ display:flex; align-items:baseline; gap:12px; }
+  .brand h1{
+    font-family:var(--mono); font-size:15px; font-weight:600;
+    letter-spacing:0.14em; margin:0; color:var(--text);
+    text-transform:uppercase;
+  }
+  .brand span.dim{ font-family:var(--sans); font-size:12.5px; color:var(--text-dim); font-weight:400; }
+  .live{
+    display:flex; align-items:center; gap:7px;
+    font-family:var(--mono); font-size:10.5px; letter-spacing:0.12em; color:var(--text-dimmer);
+    text-transform:uppercase;
+  }
+  .live .dot{
+    width:7px; height:7px; border-radius:50%; background:var(--accent-2);
+    box-shadow:0 0 6px 1px var(--accent-2);
+    animation:pulse 2.2s ease-in-out infinite;
+  }
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:0.35;} }
+  @media (prefers-reduced-motion: reduce){ .live .dot{ animation:none; } }
+
+  /* ---------- layout ---------- */
+  .layout{
+    display:grid;
+    grid-template-columns: 320px 1fr;
+    gap:0;
+    min-height:calc(100vh - 61px);
+  }
+  @media (max-width: 880px){
+    .layout{ grid-template-columns: 1fr; }
+  }
+
+  /* ---------- sidebar ---------- */
+  .sidebar{
+    border-right:1px solid var(--border-soft);
+    background:var(--panel-2);
+    padding:22px 18px 40px;
+    overflow-y:auto;
+  }
+  .module{ margin-bottom:26px; }
+  .module-head{
+    display:flex; align-items:center; gap:8px;
+    font-family:var(--mono); font-size:10.5px; letter-spacing:0.14em;
+    color:var(--text-dim); text-transform:uppercase; margin-bottom:10px;
+  }
+  .module-head .num{ color:var(--accent); }
+  .module-head .rule{ flex:1; height:1px; background:var(--border-soft); }
+
+  textarea.data-in{
+    width:100%; min-height:110px; resize:vertical;
+    background:var(--panel); border:1px solid var(--border); border-radius:var(--radius);
+    color:var(--text-dim); font-family:var(--mono); font-size:11px; line-height:1.5;
+    padding:10px; white-space:pre;
+  }
+  textarea.data-in:focus{ outline:none; border-color:var(--accent); color:var(--text); }
+
+  .row-btns{ display:flex; gap:8px; margin-top:8px; }
+  button{
+    font-family:var(--sans); font-size:12.5px; font-weight:600;
+    border-radius:var(--radius); cursor:pointer; transition:all .12s ease;
+  }
+  .btn{
+    background:var(--panel); border:1px solid var(--border); color:var(--text);
+    padding:7px 12px;
+  }
+  .btn:hover{ border-color:var(--accent); color:var(--accent); }
+  .btn-primary{
+    background:var(--accent); border:1px solid var(--accent); color:#fff8ec;
+    padding:7px 12px;
+  }
+  .btn-primary:hover{ background:#e08c00; }
+  .btn-ghost{
+    background:transparent; border:1px dashed var(--border); color:var(--text-dim);
+    padding:8px 12px; width:100%;
+  }
+  .btn-ghost:hover{ border-color:var(--accent-2); color:var(--accent-2); }
+  .hint{ font-size:11px; color:var(--text-dimmer); margin-top:7px; line-height:1.5; }
+  .status{ font-family:var(--mono); font-size:11px; margin-top:8px; min-height:14px; }
+  .status.ok{ color:var(--accent-2); }
+  .status.err{ color:var(--danger); }
+
+  select, input[type=text]{
+    background:var(--panel); border:1px solid var(--border); color:var(--text);
+    font-family:var(--sans); font-size:12.5px; border-radius:var(--radius);
+    padding:6px 8px; width:100%;
+  }
+  select:focus, input[type=text]:focus{ outline:none; border-color:var(--accent); }
+  label.field{ display:block; font-size:11px; color:var(--text-dim); margin:0 0 5px; }
+  .field-wrap{ margin-bottom:12px; }
+
+  .toggle-row{ display:flex; align-items:center; justify-content:space-between; padding:5px 0; }
+  .toggle-row span{ font-size:12.5px; color:var(--text-dim); }
+  .switch{ position:relative; width:32px; height:18px; flex-shrink:0; }
+  .switch input{ opacity:0; width:0; height:0; }
+  .slider{
+    position:absolute; inset:0; background:var(--border); border-radius:20px; cursor:pointer;
+    transition:.15s;
+  }
+  .slider::before{
+    content:""; position:absolute; width:13px; height:13px; left:2.5px; top:2.5px;
+    background:#fff; border-radius:50%; transition:.15s;
+    box-shadow:0 1px 2px rgba(0,0,0,0.25);
+  }
+  input:checked + .slider{ background:var(--accent-soft); border:1px solid var(--accent); }
+  input:checked + .slider::before{ background:var(--accent); transform:translateX(13px); }
+
+  /* trace rows */
+  .trace-list{ display:flex; flex-direction:column; gap:8px; margin-bottom:10px; }
+  .trace-row{
+    display:flex; flex-direction:column; gap:6px;
+    background:var(--panel); border:1px solid var(--border); border-radius:var(--radius);
+    padding:7px;
+  }
+  .trace-row.hidden-trace{ opacity:0.4; }
+  .trace-row-main{
+    display:grid; grid-template-columns:22px 1fr 82px 26px 26px; gap:6px; align-items:center;
+  }
+  .trace-row-err{
+    display:flex; align-items:center; gap:6px; padding-left:28px;
+  }
+  .trace-row-err label{
+    font-family:var(--mono); font-size:9.5px; letter-spacing:0.06em; text-transform:uppercase;
+    color:var(--text-dimmer); white-space:nowrap;
+  }
+  .trace-row-err select{ flex:1; min-width:0; font-size:11px; padding:4px 6px; }
+  .trace-row input[type=color]{
+    width:22px; height:22px; border:none; background:none; padding:0; cursor:pointer;
+    border-radius:50%; overflow:hidden;
+  }
+  .trace-row input[type=color]::-webkit-color-swatch-wrapper{ padding:0; }
+  .trace-row input[type=color]::-webkit-color-swatch{ border:1px solid var(--border); border-radius:50%; }
+  .trace-col-select select{ font-size:11.5px; padding:5px 6px; }
+  .trace-dash-select select{ font-size:10.5px; padding:5px 4px; }
+  .icon-btn{
+    background:transparent; border:1px solid var(--border); color:var(--text-dim);
+    width:26px; height:26px; display:flex; align-items:center; justify-content:center;
+    border-radius:var(--radius); padding:0;
+  }
+  .icon-btn:hover{ border-color:var(--accent-2); color:var(--accent-2); }
+  .icon-btn.remove:hover{ border-color:var(--danger); color:var(--danger); }
+  .icon-btn svg{ width:13px; height:13px; }
+  .trace-label-input{ display:none; }
+
+  /* ---------- main / scope ---------- */
+  main{ padding:22px 26px 26px; display:flex; flex-direction:column; gap:14px; }
+  .title-row{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+  .title-row input[type=text]{
+    background:transparent; border:none; color:var(--text); font-family:var(--mono);
+    font-size:16px; font-weight:600; letter-spacing:0.02em; padding:2px 0; width:auto; min-width:220px;
+  }
+  .title-row input[type=text]:focus{ outline:none; border-bottom:1px solid var(--accent); }
+  .readout{
+    font-family:var(--mono); font-size:11px; color:var(--text-dimmer);
+    display:flex; gap:16px; margin-left:auto;
+  }
+  .readout b{ color:var(--accent-2); font-weight:500; }
+
+  .scope{
+    position:relative; flex:0 0 auto;
+    width:100%; height:460px; min-width:240px; min-height:200px; max-width:100%; max-height:85vh;
+    resize:both; overflow:hidden;
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:6px;
+    padding:20px;
+  }
+  .resize-hint{
+    position:absolute; bottom:4px; right:6px; font-family:var(--mono);
+    font-size:9.5px; color:var(--text-dimmer); pointer-events:none; letter-spacing:0.04em;
+  }
+  .scope::before, .scope::after,
+  .scope .corner-tl, .scope .corner-br{
+    content:""; position:absolute; width:14px; height:14px; pointer-events:none;
+  }
+  .corner{ position:absolute; width:14px; height:14px; border-color:var(--border); pointer-events:none; }
+  .corner.tl{ top:8px; left:8px; border-top:1px solid var(--accent); border-left:1px solid var(--accent); }
+  .corner.tr{ top:8px; right:8px; border-top:1px solid var(--accent); border-right:1px solid var(--accent); }
+  .corner.bl{ bottom:8px; left:8px; border-bottom:1px solid var(--accent); border-left:1px solid var(--accent); }
+  .corner.br{ bottom:8px; right:8px; border-bottom:1px solid var(--accent); border-right:1px solid var(--accent); }
+
+  .chart-wrap{ position:relative; width:100%; height:100%; min-height:0; }
+  .empty-state{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    flex-direction:column; gap:8px; color:var(--text-dimmer); font-family:var(--mono); font-size:12px;
+    text-align:center; padding:20px;
+  }
+
+  .footer-actions{ display:flex; gap:8px; justify-content:flex-end; }
+
+  ::-webkit-scrollbar{ width:9px; height:9px; }
+  ::-webkit-scrollbar-track{ background:transparent; }
+  ::-webkit-scrollbar-thumb{ background:var(--border); border-radius:5px; }
+  ::-webkit-scrollbar-thumb:hover{ background:var(--text-dimmer); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <h1>Channel Bench</h1>
+    <span class="dim">separation console</span>
+  </div>
+  <div class="live"><span class="dot"></span>plot engine ready</div>
+</header>
+
+<div class="layout">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+
+    <div class="module">
+      <div class="module-head"><span class="num">01</span> data <div class="rule"></div></div>
+      <textarea id="dataIn" class="data-in" spellcheck="false"></textarea>
+      <div class="row-btns">
+        <button class="btn-primary" id="parseBtn" style="flex:1">Parse data</button>
+        <button class="btn" id="fileBtn">Upload CSV</button>
+        <input type="file" id="fileInput" accept=".csv,text/csv" style="display:none">
+      </div>
+      <div class="status" id="parseStatus"></div>
+      <div class="hint">Paste any CSV with a header row. Every column becomes selectable as X or a trace's Y.</div>
+    </div>
+
+    <div class="module">
+      <div class="module-head"><span class="num">02</span> axes <div class="rule"></div></div>
+      <div class="field-wrap">
+        <label class="field">X-axis column</label>
+        <select id="xSelect"></select>
+      </div>
+      <div class="field-wrap">
+        <label class="field">X-axis label</label>
+        <input type="text" id="xAxisLabel" placeholder="X-axis label">
+      </div>
+      <div class="field-wrap">
+        <label class="field">Y-axis label</label>
+        <input type="text" id="yAxisLabel" placeholder="value">
+      </div>
+      <div class="toggle-row">
+        <span>Log scale (Y)</span>
+        <label class="switch"><input type="checkbox" id="logY"><span class="slider"></span></label>
+      </div>
+    </div>
+
+    <div class="module">
+      <div class="module-head"><span class="num">03</span> traces <div class="rule"></div></div>
+      <div class="trace-list" id="traceList"></div>
+      <button class="btn-ghost" id="addTrace">+ add trace</button>
+      <div class="hint">Each trace can optionally take an error-bar column (e.g. a std_p / sem_p column) for ± error bars.</div>
+    </div>
+
+    <div class="module">
+      <div class="module-head"><span class="num">04</span> display <div class="rule"></div></div>
+      <div class="toggle-row"><span>Show points</span>
+        <label class="switch"><input type="checkbox" id="showPoints" checked><span class="slider"></span></label></div>
+      <div class="toggle-row"><span>Smooth curve</span>
+        <label class="switch"><input type="checkbox" id="smoothLine"><span class="slider"></span></label></div>
+      <div class="toggle-row"><span>Grid lines</span>
+        <label class="switch"><input type="checkbox" id="showGrid" checked><span class="slider"></span></label></div>
+      <div class="toggle-row"><span>Legend</span>
+        <label class="switch"><input type="checkbox" id="showLegend" checked><span class="slider"></span></label></div>
+    </div>
+
+    <div class="module">
+      <div class="module-head"><span class="num">05</span> publication <div class="rule"></div></div>
+      <div class="field-wrap">
+        <label class="field">Font</label>
+        <select id="pubFont">
+          <option value="serif" selected>Serif (Times New Roman)</option>
+          <option value="sans">Sans (Helvetica / Arial)</option>
+        </select>
+      </div>
+      <div class="field-wrap">
+        <label class="field">Base font size (pt)</label>
+        <input type="text" inputmode="decimal" id="pubFontSize" value="10">
+      </div>
+      <div class="field-wrap">
+        <label class="field">Axis label size (pt)</label>
+        <input type="text" inputmode="decimal" id="axisLabelSize" value="10">
+      </div>
+      <div class="field-wrap">
+        <label class="field">Axis number size (pt)</label>
+        <input type="text" inputmode="decimal" id="axisTickSize" value="9">
+      </div>
+      <div class="field-wrap">
+        <label class="field">Line width (pt)</label>
+        <input type="text" inputmode="decimal" id="pubLineWidth" value="1.25">
+      </div>
+      <div class="toggle-row"><span>Distinct markers per trace</span>
+        <label class="switch"><input type="checkbox" id="distinctMarkers" checked><span class="slider"></span></label></div>
+      <div class="toggle-row"><span>Distinct line styles per trace</span>
+        <label class="switch"><input type="checkbox" id="distinctDashes" checked><span class="slider"></span></label></div>
+      <div class="toggle-row"><span>Include title in export</span>
+        <label class="switch"><input type="checkbox" id="includeTitleExport"><span class="slider"></span></label></div>
+
+      <div class="field-wrap" style="margin-top:14px;">
+        <label class="field">Figure size preset (export only)</label>
+        <select id="sizePreset">
+          <option value="single">Single column (3.3 × 2.5 in)</option>
+          <option value="double">Double column (6.5 × 4 in)</option>
+          <option value="square">Square (4 × 4 in)</option>
+          <option value="custom">Custom</option>
+        </select>
+      </div>
+      <div class="field-wrap">
+        <label class="field">Export width (in)</label>
+        <input type="text" inputmode="decimal" id="figWidthIn" value="3.3">
+      </div>
+      <div class="field-wrap">
+        <label class="field">Export height (in)</label>
+        <input type="text" inputmode="decimal" id="figHeightIn" value="2.5">
+      </div>
+      <div class="field-wrap">
+        <label class="field">PNG export DPI</label>
+        <select id="pngDpi">
+          <option value="150">150 (screen)</option>
+          <option value="300" selected>300 (print standard)</option>
+          <option value="600">600 (high-res print)</option>
+        </select>
+      </div>
+      <div class="hint" id="exportSizeHint">Drag the chart box's corner (below) to resize it — the width/height above update to match, so SVG/PNG export at exactly what you see. You can also type an exact size or pick a preset directly. SVG is vector — recommended for papers: scales to any size, tiny file, embeds cleanly in LaTeX/Word. Use PNG only if a journal specifically requires raster.</div>
+    </div>
+
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main>
+    <div class="title-row">
+      <input type="text" id="chartTitle" value="Channel separation">
+      <div class="readout">
+        <span>X: <b id="roX">—</b></span>
+        <span>N traces: <b id="roN">0</b></span>
+      </div>
+    </div>
+
+    <div class="scope" id="scopeBox">
+      <div class="corner tl"></div><div class="corner tr"></div>
+      <div class="corner bl"></div><div class="corner br"></div>
+      <div class="chart-wrap" id="chartWrap">
+        <canvas id="chart"></canvas>
+        <div class="empty-state" id="emptyState">no traces plotted — add a trace from the panel on the left</div>
+      </div>
+      <div class="resize-hint">drag corner ↘ to resize — export size follows</div>
+    </div>
+
+    <div class="footer-actions">
+      <button class="btn-primary" id="exportSvgBtn">Export SVG</button>
+      <button class="btn" id="exportBtn">Export PNG</button>
+    </div>
+  </main>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // A palette that still reads as distinct when printed in grayscale,
+  // paired with MARKER_SHAPES and LINE_STYLES below so each trace is
+  // identifiable by color, marker shape, AND line style at once.
+  const PALETTE = ["#c97a00","#1f9e97","#d43f5f","#4c9a2a","#7a4fd6","#2166c9","#c9660a","#178a5a"];
+  let paletteIdx = 0;
+  const nextColor = () => PALETTE[(paletteIdx++) % PALETTE.length];
+
+  // Chart.js pointStyle names; SVG_MARKERS below draws the matching glyph.
+  const MARKER_SHAPES = ["circle","rect","triangle","rectRot","cross","star"];
+
+  // Named line styles, selectable per trace from the dropdown in the
+  // trace row. New traces still get one assigned automatically in this
+  // order (nextDashKey), but the user can override any trace's choice.
+  const LINE_STYLES = [
+    { key: "solid",      label: "Solid",        dash: [] },
+    { key: "dashed",     label: "Dashed",       dash: [7,3] },
+    { key: "dotted",     label: "Dotted",       dash: [2,2] },
+    { key: "dashdot",    label: "Dash-dot",     dash: [9,3,2,3] },
+    { key: "longdash",   label: "Long dash",    dash: [12,4] },
+    { key: "finedot",    label: "Fine dot",     dash: [1,3] },
+    { key: "dashdotdot", label: "Dash-dot-dot", dash: [9,3,2,3,2,3] },
+  ];
+  const dashArrayFor = (key) => (LINE_STYLES.find(l => l.key === key) || LINE_STYLES[0]).dash;
+  let dashIdx = 0;
+  const nextDashKey = () => LINE_STYLES[(dashIdx++) % LINE_STYLES.length].key;
+
+  const pubSettings = {
+    font: "serif",
+    fontSizePt: 10,
+    axisLabelSizePt: 10,
+    axisTickSizePt: 9,
+    lineWidthPt: 1.25,
+    distinctMarkers: true,
+    distinctDashes: true,
+    includeTitle: false,
+    widthIn: 3.3,
+    heightIn: 2.5,
+    dpi: 300,
+  };
+  const fontStack = () => pubSettings.font === "serif"
+    ? "'Times New Roman', Times, 'STIX Two Text', serif"
+    : "Helvetica, Arial, 'Nimbus Sans', sans-serif";
+  const PT_TO_PX = 96 / 72; // CSS/canvas px per point, used to size fonts/lines consistently
+
+  // Used to measure real text widths (legend labels etc.) instead of a
+  // crude "chars * constant" guess, which was over/under-estimating
+  // width and causing the SVG legend to wrap far more than necessary.
+  const measureCanvas = document.createElement("canvas");
+  const measureCtx = measureCanvas.getContext("2d");
+  function measureTextWidth(text, fontPx, weight, family){
+    measureCtx.font = `${weight || 400} ${fontPx}px ${family}`;
+    return measureCtx.measureText(text).width;
+  }
+
+  // Example bench_ready_p.csv row shape (as written by export_for_bench.py):
+  // mean_p per protocol, plus its sem_p/std_p siblings, so a fresh load
+  // demonstrates the error-bar feature immediately.
+  const SAMPLE_CSV =
+`N,PAR_mean_p,GEN_mean_p,PAR_sem_p,GEN_sem_p,PAR_std_p,GEN_std_p
+2,0.925057,0.940366,0.008598,0.009534,0.019226,0.021318
+3,0.840532,0.869779,0.013611,0.014672,0.030436,0.032807`;
+
+  // ---------- state ----------
+  let columns = [];
+  let rows = [];
+  let series = [];   // {id, yCol, color, label, visible}
+  let xColumn = null;
+  let seriesId = 0;
+  let xAxisLabelCustom = false;   // true once the user has hand-edited the X label
+  let yAxisLabelCustom = false;   // true once the user has hand-edited the Y label
+
+  const $ = (sel) => document.querySelector(sel);
+  const dataIn = $("#dataIn");
+  const parseStatus = $("#parseStatus");
+  const xSelect = $("#xSelect");
+  const xAxisLabelInput = $("#xAxisLabel");
+  const yAxisLabelInput = $("#yAxisLabel");
+  const traceList = $("#traceList");
+  const emptyState = $("#emptyState");
+  const roX = $("#roX");
+  const roN = $("#roN");
+
+  const pubFontSel = $("#pubFont");
+  const pubFontSizeInput = $("#pubFontSize");
+  const axisLabelSizeInput = $("#axisLabelSize");
+  const axisTickSizeInput = $("#axisTickSize");
+  const pubLineWidthInput = $("#pubLineWidth");
+  const distinctMarkersInput = $("#distinctMarkers");
+  const distinctDashesInput = $("#distinctDashes");
+  const includeTitleInput = $("#includeTitleExport");
+  const sizePresetSel = $("#sizePreset");
+  const figWidthInput = $("#figWidthIn");
+  const figHeightInput = $("#figHeightIn");
+  const pngDpiSel = $("#pngDpi");
+
+  const SIZE_PRESETS = {
+    single: { w: 3.3, h: 2.5 },
+    double: { w: 6.5, h: 4.0 },
+    square: { w: 4.0, h: 4.0 },
+  };
+
+  dataIn.value = SAMPLE_CSV;
+
+  // ---------- csv parsing ----------
+  function parseCSV(text){
+    const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+    if (lines.length < 2) throw new Error("Need a header row plus at least one data row.");
+    const header = lines[0].split(",").map(h => h.trim());
+    const out = [];
+    for (let i = 1; i < lines.length; i++){
+      const cells = lines[i].split(",");
+      if (cells.length !== header.length) continue;
+      const row = {};
+      header.forEach((h, idx) => {
+        const raw = cells[idx].trim();
+        const num = Number(raw);
+        row[h] = raw !== "" && !isNaN(num) ? num : raw;
+      });
+      out.push(row);
+    }
+    if (out.length === 0) throw new Error("No valid data rows matched the header.");
+    return { header, rows: out };
+  }
+
+  function isNumericColumn(col){
+    return rows.every(r => typeof r[col] === "number");
+  }
+
+  // ---------- rendering: controls ----------
+  function renderXSelect(){
+    xSelect.innerHTML = "";
+    columns.forEach(c => {
+      const opt = document.createElement("option");
+      opt.value = c; opt.textContent = c;
+      xSelect.appendChild(opt);
+    });
+    if (!columns.includes(xColumn)) xColumn = columns[0];
+    xSelect.value = xColumn;
+    roX.textContent = xColumn || "—";
+  }
+
+  function colOptionsHTML(selected){
+    return columns.map(c => `<option value="${c}" ${c===selected?"selected":""}>${c}</option>`).join("");
+  }
+
+  function errOptionsHTML(selected){
+    const sel = selected || "";
+    return `<option value="" ${sel===""?"selected":""}>No error bars</option>` +
+      columns.map(c => `<option value="${c}" ${c===sel?"selected":""}>${c}</option>`).join("");
+  }
+
+  function dashOptionsHTML(selected){
+    return LINE_STYLES.map(l => `<option value="${l.key}" ${l.key===selected?"selected":""}>${l.label}</option>`).join("");
+  }
+
+  function renderTraceList(){
+    traceList.innerHTML = "";
+    roN.textContent = series.length;
+    series.forEach(s => {
+      const row = document.createElement("div");
+      row.className = "trace-row" + (s.visible ? "" : " hidden-trace");
+      row.dataset.id = s.id;
+      row.innerHTML = `
+        <div class="trace-row-main">
+          <input type="color" class="c-color" value="${s.color}" title="Trace color">
+          <div class="trace-col-select"><select class="c-col">${colOptionsHTML(s.yCol)}</select></div>
+          <div class="trace-dash-select"><select class="c-dash" title="Line style">${dashOptionsHTML(s.dashKey)}</select></div>
+          <button class="icon-btn c-toggle" title="Show / hide trace">
+            ${s.visible ? eyeIcon() : eyeOffIcon()}
+          </button>
+          <button class="icon-btn remove c-remove" title="Remove trace">${xIcon()}</button>
+        </div>
+        <div class="trace-row-err">
+          <label>± err</label>
+          <select class="c-err">${errOptionsHTML(s.errCol)}</select>
+        </div>
+      `;
+      traceList.appendChild(row);
+
+      row.querySelector(".c-color").addEventListener("input", (e) => {
+        s.color = e.target.value; draw();
+      });
+      row.querySelector(".c-col").addEventListener("change", (e) => {
+        s.yCol = e.target.value;
+        if (s.label === s._auto) { s.label = s.yCol; s._auto = s.yCol; }
+        draw();
+      });
+      row.querySelector(".c-dash").addEventListener("change", (e) => {
+        s.dashKey = e.target.value; draw();
+      });
+      row.querySelector(".c-err").addEventListener("change", (e) => {
+        s.errCol = e.target.value; draw();
+      });
+      row.querySelector(".c-toggle").addEventListener("click", () => {
+        s.visible = !s.visible; renderTraceList(); draw();
+      });
+      row.querySelector(".c-remove").addEventListener("click", () => {
+        series = series.filter(x => x.id !== s.id);
+        renderTraceList(); draw();
+      });
+    });
+  }
+
+  function eyeIcon(){ return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>`; }
+  function eyeOffIcon(){ return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a21.6 21.6 0 0 1 5.06-5.94M9.9 4.24A10.94 10.94 0 0 1 12 5c7 0 11 7 11 7a21.6 21.6 0 0 1-2.16 3.19M14.12 14.12a3 3 0 1 1-4.24-4.24"/><path d="M1 1l22 22"/></svg>`; }
+  function xIcon(){ return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>`; }
+
+  function firstUnusedColumn(){
+    const used = new Set(series.map(s => s.yCol));
+    const candidate = columns.find(c => c !== xColumn && !used.has(c));
+    return candidate || columns.find(c => c !== xColumn) || columns[0];
+  }
+
+  // For a column like "PAR_mean_p", looks for a sibling "PAR_sem_p" (preferred)
+  // or "PAR_std_p" error column, so bench_ready_*.csv files from
+  // export_for_bench.py get error bars wired up automatically on load.
+  function guessErrColFor(yCol){
+    const m = /^(.*)_mean(_[a-zA-Z]+)$/.exec(yCol);
+    if (!m) return "";
+    const [, base, suffix] = m;
+    const semCol = `${base}_sem${suffix}`;
+    const stdCol = `${base}_std${suffix}`;
+    if (columns.includes(semCol)) return semCol;
+    if (columns.includes(stdCol)) return stdCol;
+    return "";
+  }
+
+  function addTrace(yCol, errCol){
+    const col = yCol || firstUnusedColumn();
+    const err = errCol !== undefined ? errCol : guessErrColFor(col);
+    const s = { id: ++seriesId, yCol: col, errCol: err, color: nextColor(), dashKey: nextDashKey(), label: col, visible: true };
+    s._auto = col;
+    series.push(s);
+    renderTraceList();
+    draw();
+  }
+
+  // ---------- chart ----------
+  let chart = null;
+
+  function pointsWithError(s){
+    if (!s.visible) return [];
+    const pts = [];
+    rows.forEach(r => {
+      const x = r[xColumn], y = r[s.yCol];
+      if (typeof x === "undefined" || typeof y !== "number" || isNaN(y)) return;
+      let e = null;
+      if (s.errCol){
+        const ev = r[s.errCol];
+        if (typeof ev === "number" && !isNaN(ev)) e = ev;
+      }
+      pts.push({ x, y, e });
+    });
+    return pts;
+  }
+
+  // Extends the y-domain to fit error bar caps, not just the raw y values,
+  // so bars near the top/bottom of the chart don't get clipped. Chart.js
+  // only sees suggestedMin/Max as a hint, so this only expands the range
+  // when needed and never overrides a wider auto-computed range.
+  function computeYBoundsWithError(){
+    const vals = [];
+    series.filter(s => s.visible).forEach(s => {
+      pointsWithError(s).forEach(p => {
+        vals.push(p.y);
+        if (p.e !== null){ vals.push(p.y + p.e); vals.push(p.y - p.e); }
+      });
+    });
+    return vals;
+  }
+
+  function buildDatasets(){
+    const visible = series.filter(s => s.visible);
+    return visible.map((s, i) => {
+      const pts = pointsWithError(s);
+      return {
+        label: s.label || s.yCol,
+        data: pts.map(p => ({ x: p.x, y: p.y })),
+        errors: pts.map(p => p.e),
+        borderColor: s.color,
+        backgroundColor: s.color,
+        pointBackgroundColor: s.color,
+        pointBorderColor: s.color,
+        pointStyle: $("#showPoints").checked
+          ? (pubSettings.distinctMarkers ? MARKER_SHAPES[i % MARKER_SHAPES.length] : "circle")
+          : false,
+        pointRadius: $("#showPoints").checked ? 3.5 : 0,
+        pointHoverRadius: 5,
+        borderWidth: pubSettings.lineWidthPt * PT_TO_PX,
+        borderDash: pubSettings.distinctDashes ? dashArrayFor(s.dashKey) : [],
+        tension: $("#smoothLine").checked ? 0.35 : 0,
+        spanGaps: true,
+      };
+    });
+  }
+
+  // Draws ± error bars (a vertical line + top/bottom caps) over each
+  // dataset's points, reading the per-point error stashed in `errors`
+  // (parallel array to `data`, built in buildDatasets).
+  const errorBarsPlugin = {
+    id: "errorBars",
+    afterDatasetsDraw(c){
+      const { ctx, scales } = c;
+      c.data.datasets.forEach((ds, i) => {
+        if (!ds.errors) return;
+        const meta = c.getDatasetMeta(i);
+        if (!meta.visible) return;
+        ctx.save();
+        ctx.strokeStyle = ds.borderColor;
+        ctx.lineWidth = 1.25;
+        const capW = 4;
+        meta.data.forEach((point, idx) => {
+          const err = ds.errors[idx];
+          if (err === null || err === undefined || isNaN(err) || err <= 0) return;
+          const yVal = ds.data[idx].y;
+          let yHi = yVal + err;
+          let yLo = yVal - err;
+          if (scales.y.type === "logarithmic") yLo = Math.max(yLo, scales.y.min > 0 ? scales.y.min : 1e-9);
+          const pyTop = scales.y.getPixelForValue(yHi);
+          const pyBot = scales.y.getPixelForValue(yLo);
+          const px = point.x;
+          ctx.beginPath();
+          ctx.moveTo(px, pyTop); ctx.lineTo(px, pyBot);
+          ctx.moveTo(px - capW, pyTop); ctx.lineTo(px + capW, pyTop);
+          ctx.moveTo(px - capW, pyBot); ctx.lineTo(px + capW, pyBot);
+          ctx.stroke();
+        });
+        ctx.restore();
+      });
+    }
+  };
+
+  function draw(){
+    const datasets = buildDatasets();
+    emptyState.style.display = datasets.length ? "none" : "flex";
+    roX.textContent = xColumn || "—";
+
+    const xIsNumeric = isNumericColumn(xColumn);
+    const gridColor = $("#showGrid").checked ? "rgba(0,0,0,0.10)" : "transparent";
+    const tickColor = "#1b1f27";
+    const family = fontStack();
+    const baseSize = pubSettings.fontSizePt * PT_TO_PX;
+    const pubFont = { family, size: baseSize };
+    const pubFontBold = { family, size: baseSize, weight: "600" };
+    const axisTitleFont = { family, size: pubSettings.axisLabelSizePt * PT_TO_PX, weight: "600" };
+    const axisTickFont = { family, size: pubSettings.axisTickSizePt * PT_TO_PX };
+
+    const xAxisText = xAxisLabelInput.value || xColumn || "";
+    const yAxisText = yAxisLabelInput.value || "value";
+
+    const yBoundVals = computeYBoundsWithError();
+    let ySuggestedMin, ySuggestedMax;
+    if (yBoundVals.length){
+      const lo = Math.min(...yBoundVals), hi = Math.max(...yBoundVals);
+      const pad = (hi - lo) * 0.08 || Math.abs(hi || 1) * 0.08;
+      ySuggestedMin = lo - pad; ySuggestedMax = hi + pad;
+    }
+
+    const config = {
+      type: "line",
+      data: { datasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: { duration: 250 },
+        interaction: { mode: "nearest", intersect: false },
+        plugins: {
+          title: {
+            display: pubSettings.includeTitle && !!$("#chartTitle").value,
+            text: $("#chartTitle").value,
+            color: "#1b1f27",
+            font: pubFontBold,
+            padding: { bottom: 10 }
+          },
+          legend: {
+            display: $("#showLegend").checked,
+            position: "top",
+            align: "end",
+            labels: { color: "#1b1f27", font: pubFont, boxWidth: 18, boxHeight: 1, usePointStyle: true }
+          },
+          tooltip: {
+            backgroundColor: "#ffffff",
+            borderColor: "#d8dce3",
+            borderWidth: 1,
+            titleColor: "#c97a00",
+            bodyColor: "#1b1f27",
+            titleFont: pubFont,
+            bodyFont: pubFont,
+            padding: 10,
+            displayColors: true,
+          }
+        },
+        scales: {
+          x: {
+            type: xIsNumeric ? "linear" : "category",
+            title: { display: true, text: xAxisText, color: tickColor, font: axisTitleFont },
+            grid: { color: gridColor, drawTicks: false },
+            ticks: { color: tickColor, font: axisTickFont },
+            border: { color: "#1b1f27" }
+          },
+          y: {
+            type: $("#logY").checked ? "logarithmic" : "linear",
+            suggestedMin: ySuggestedMin,
+            suggestedMax: ySuggestedMax,
+            title: { display: true, text: yAxisText, color: tickColor, font: axisTitleFont },
+            grid: { color: gridColor, drawTicks: false },
+            ticks: { color: tickColor, font: axisTickFont },
+            border: { color: "#1b1f27" }
+          }
+        }
+      },
+      plugins: [{
+        id: "whiteBackground",
+        beforeDraw: (c) => {
+          const ctx = c.canvas.getContext("2d");
+          ctx.save();
+          ctx.globalCompositeOperation = "destination-over";
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(0, 0, c.width, c.height);
+          ctx.restore();
+        }
+      }, errorBarsPlugin]
+    };
+
+    if (chart) { chart.destroy(); }
+    chart = new Chart($("#chart").getContext("2d"), config);
+  }
+
+  // ---------- events ----------
+  $("#parseBtn").addEventListener("click", () => {
+    try {
+      const { header, rows: parsedRows } = parseCSV(dataIn.value);
+      columns = header;
+      rows = parsedRows;
+      xColumn = columns[0];
+      renderXSelect();
+
+      // Reset the axis-label fields to defaults unless the user has
+      // manually typed something in them already.
+      if (!xAxisLabelCustom) xAxisLabelInput.value = xColumn || "";
+      if (!yAxisLabelCustom) yAxisLabelInput.value = "value";
+
+      // reset traces to sensible defaults on fresh parse
+      series = [];
+      paletteIdx = 0;
+      dashIdx = 0;
+      const candidates = columns.filter(c => c !== xColumn && isNumericColumn(c));
+      (candidates.length ? candidates.slice(0, 2) : columns.slice(1, 2)).forEach(c => addTrace(c));
+
+      parseStatus.textContent = `parsed ${rows.length} rows × ${columns.length} columns`;
+      parseStatus.className = "status ok";
+      draw();
+    } catch (err) {
+      parseStatus.textContent = "error: " + err.message;
+      parseStatus.className = "status err";
+    }
+  });
+
+  $("#fileBtn").addEventListener("click", () => $("#fileInput").click());
+  $("#fileInput").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      dataIn.value = evt.target.result;
+      $("#parseBtn").click();
+    };
+    reader.readAsText(file);
+  });
+
+  xSelect.addEventListener("change", (e) => {
+    xColumn = e.target.value;
+    if (!xAxisLabelCustom) xAxisLabelInput.value = xColumn || "";
+    renderTraceList();
+    draw();
+  });
+
+  xAxisLabelInput.addEventListener("input", () => {
+    xAxisLabelCustom = true;
+    draw();
+  });
+  yAxisLabelInput.addEventListener("input", () => {
+    yAxisLabelCustom = true;
+    draw();
+  });
+
+  $("#addTrace").addEventListener("click", () => addTrace());
+  $("#chartTitle").addEventListener("input", (e) => {
+    document.title = e.target.value ? `${e.target.value} — Channel Bench` : "Channel Bench";
+  });
+
+  ["logY","showPoints","smoothLine","showGrid","showLegend"].forEach(id => {
+    $("#" + id).addEventListener("change", draw);
+  });
+
+  // ---------- publication controls ----------
+  function numOr(input, fallback){
+    const v = parseFloat(input.value);
+    return isNaN(v) || v <= 0 ? fallback : v;
+  }
+
+  pubFontSel.addEventListener("change", () => { pubSettings.font = pubFontSel.value; draw(); });
+  pubFontSizeInput.addEventListener("input", () => {
+    pubSettings.fontSizePt = numOr(pubFontSizeInput, 10); draw();
+  });
+  axisLabelSizeInput.addEventListener("input", () => {
+    pubSettings.axisLabelSizePt = numOr(axisLabelSizeInput, 10); draw();
+  });
+  axisTickSizeInput.addEventListener("input", () => {
+    pubSettings.axisTickSizePt = numOr(axisTickSizeInput, 9); draw();
+  });
+  pubLineWidthInput.addEventListener("input", () => {
+    pubSettings.lineWidthPt = numOr(pubLineWidthInput, 1.25); draw();
+  });
+  distinctMarkersInput.addEventListener("change", () => {
+    pubSettings.distinctMarkers = distinctMarkersInput.checked; draw();
+  });
+  distinctDashesInput.addEventListener("change", () => {
+    pubSettings.distinctDashes = distinctDashesInput.checked; draw();
+  });
+  includeTitleInput.addEventListener("change", () => {
+    pubSettings.includeTitle = includeTitleInput.checked; draw();
+  });
+  pngDpiSel.addEventListener("change", () => { pubSettings.dpi = parseInt(pngDpiSel.value, 10); });
+
+  sizePresetSel.addEventListener("change", () => {
+    const preset = SIZE_PRESETS[sizePresetSel.value];
+    if (preset) {
+      figWidthInput.value = preset.w;
+      figHeightInput.value = preset.h;
+      pubSettings.widthIn = preset.w;
+      pubSettings.heightIn = preset.h;
+      draw();
+    }
+  });
+  figWidthInput.addEventListener("input", () => {
+    pubSettings.widthIn = numOr(figWidthInput, 3.3);
+    sizePresetSel.value = "custom";
+    draw();
+  });
+  figHeightInput.addEventListener("input", () => {
+    pubSettings.heightIn = numOr(figHeightInput, 2.5);
+    sizePresetSel.value = "custom";
+    draw();
+  });
+
+  // ---------- sync export size to the on-screen chart box ----------
+  // Dragging the box's native resize handle (bottom-right corner) should
+  // make the exported SVG/PNG match whatever size is now on screen,
+  // instead of silently exporting at the old default 3.3x2.5in.
+  // We only treat *manual* drags as a size change (not the responsive
+  // reflow that happens on load, sidebar scroll, or data updates), by
+  // watching for a mousedown that starts near the resize handle and
+  // syncing while that drag is in progress.
+  const scopeBox = $("#scopeBox");
+  const chartWrap = $("#chartWrap");
+  const exportSizeHint = $("#exportSizeHint");
+  let draggingResize = false;
+  let resizeSyncTimer = null;
+
+  function syncExportSizeFromBox(){
+    if (!chartWrap) return;
+    const rect = chartWrap.getBoundingClientRect();
+    if (rect.width < 20 || rect.height < 20) return;
+    const wIn = rect.width / 96;
+    const hIn = rect.height / 96;
+    pubSettings.widthIn = wIn;
+    pubSettings.heightIn = hIn;
+    figWidthInput.value = wIn.toFixed(2);
+    figHeightInput.value = hIn.toFixed(2);
+    sizePresetSel.value = "custom";
+  }
+
+  if (scopeBox){
+    scopeBox.addEventListener("mousedown", (e) => {
+      const rect = scopeBox.getBoundingClientRect();
+      const nearCorner = (e.clientX > rect.right - 24) && (e.clientY > rect.bottom - 24);
+      if (!nearCorner) return;
+      draggingResize = true;
+      const onUp = () => {
+        draggingResize = false;
+        window.removeEventListener("mouseup", onUp);
+        syncExportSizeFromBox(); // capture the final size precisely
+      };
+      window.addEventListener("mouseup", onUp);
+    });
+  }
+
+  if (window.ResizeObserver && chartWrap){
+    const ro = new ResizeObserver(() => {
+      if (!draggingResize) return;
+      clearTimeout(resizeSyncTimer);
+      resizeSyncTimer = setTimeout(syncExportSizeFromBox, 40);
+    });
+    ro.observe(chartWrap);
+  }
+
+  // ---------- PNG export (rendered at the chosen physical size + DPI) ----------
+  $("#exportBtn").addEventListener("click", () => {
+    if (!chart) return;
+    const w = Math.round(pubSettings.widthIn * pubSettings.dpi);
+    const h = Math.round(pubSettings.heightIn * pubSettings.dpi);
+    chart.resize(w, h);
+    const url = chart.toBase64Image("image/png", 1.0);
+    chart.resize(); // back to responsive container size
+    const link = document.createElement("a");
+    link.download = ($("#chartTitle").value || "channel-bench").replace(/\s+/g, "_") + ".png";
+    link.href = url;
+    link.click();
+  });
+
+  // ---------- SVG export (hand-built vector figure, publication-styled) ----------
+  const SVG_NS = "http://www.w3.org/2000/svg";
+
+  function fmtNum(n){
+    // trim to a reasonable number of significant digits for readable SVG source
+    return (Math.round(n * 1000) / 1000).toString();
+  }
+
+  function drawMarkerSVG(shape, cx, cy, r, color){
+    const s = r * 1.5;
+    switch (shape){
+      case "rect":
+        return `<rect x="${fmtNum(cx-s/2)}" y="${fmtNum(cy-s/2)}" width="${fmtNum(s)}" height="${fmtNum(s)}" fill="${color}"/>`;
+      case "triangle": {
+        const p = [[cx, cy-s*0.7], [cx-s*0.65, cy+s*0.55], [cx+s*0.65, cy+s*0.55]];
+        return `<polygon points="${p.map(pt=>fmtNum(pt[0])+","+fmtNum(pt[1])).join(" ")}" fill="${color}"/>`;
+      }
+      case "rectRot": { // diamond
+        const p = [[cx, cy-s*0.75], [cx+s*0.75, cy], [cx, cy+s*0.75], [cx-s*0.75, cy]];
+        return `<polygon points="${p.map(pt=>fmtNum(pt[0])+","+fmtNum(pt[1])).join(" ")}" fill="${color}"/>`;
+      }
+      case "cross":
+        return `<g stroke="${color}" stroke-width="${fmtNum(r*0.45)}">
+          <line x1="${fmtNum(cx-s*0.7)}" y1="${fmtNum(cy)}" x2="${fmtNum(cx+s*0.7)}" y2="${fmtNum(cy)}"/>
+          <line x1="${fmtNum(cx)}" y1="${fmtNum(cy-s*0.7)}" x2="${fmtNum(cx)}" y2="${fmtNum(cy+s*0.7)}"/>
+        </g>`;
+      case "star": {
+        let pts = [];
+        for (let k = 0; k < 10; k++){
+          const rad = k % 2 === 0 ? s*0.75 : s*0.32;
+          const ang = -Math.PI/2 + k*Math.PI/5;
+          pts.push([cx + rad*Math.cos(ang), cy + rad*Math.sin(ang)]);
+        }
+        return `<polygon points="${pts.map(pt=>fmtNum(pt[0])+","+fmtNum(pt[1])).join(" ")}" fill="${color}"/>`;
+      }
+      case "circle":
+      default:
+        return `<circle cx="${fmtNum(cx)}" cy="${fmtNum(cy)}" r="${fmtNum(r*0.65)}" fill="${color}"/>`;
+    }
+  }
+
+  function niceTicks(min, max, count){
+    if (min === max) { min -= 1; max += 1; }
+    const span = max - min;
+    const step0 = span / count;
+    const mag = Math.pow(10, Math.floor(Math.log10(step0)));
+    const norm = step0 / mag;
+    const step = (norm < 1.5 ? 1 : norm < 3 ? 2 : norm < 7 ? 5 : 10) * mag;
+    const start = Math.ceil(min / step) * step;
+    const ticks = [];
+    for (let v = start; v <= max + step*1e-6; v += step) ticks.push(Math.round(v/step)*step);
+    return ticks;
+  }
+
+  function logTicks(min, max){
+    const lo = Math.floor(Math.log10(min));
+    const hi = Math.ceil(Math.log10(max));
+    const ticks = [];
+    for (let e = lo; e <= hi; e++) ticks.push(Math.pow(10, e));
+    return ticks;
+  }
+
+  function generateSVG(){
+    const wPx = pubSettings.widthIn * 96;
+    const hPx = pubSettings.heightIn * 96;
+    const fs = pubSettings.fontSizePt * PT_TO_PX;      // base size (legend, chart title)
+    const fsTitle = fs * 1.15;
+    const lw = pubSettings.lineWidthPt * PT_TO_PX;     // data line width, px
+    const family = fontStack();
+
+    // Axis label (title) and axis number (tick) sizes are independently
+    // adjustable. "effFs" folds them back into a single equivalent size
+    // for the margin heuristics below, which were originally tuned
+    // around one shared font size.
+    const axisFsLabel = pubSettings.axisLabelSizePt * PT_TO_PX;
+    const axisFsTick = pubSettings.axisTickSizePt * PT_TO_PX;
+    const effFs = Math.max(axisFsLabel, axisFsTick / 0.9);
+
+    const visible = series.filter(s => s.visible);
+    const xIsNumeric = isNumericColumn(xColumn);
+    const isLog = $("#logY").checked;
+    const showGrid = $("#showGrid").checked;
+    const showLegend = $("#showLegend").checked && visible.length > 0;
+    const includeTitle = pubSettings.includeTitle && !!$("#chartTitle").value;
+    const xAxisText = xAxisLabelInput.value || xColumn || "";
+    const yAxisText = yAxisLabelInput.value || "value";
+
+    // --- gather data points per series ---
+    const catValues = xIsNumeric ? null : [...new Set(rows.map(r => r[xColumn]))];
+    const seriesPoints = visible.map(s => rows
+      .map(r => {
+        let e = null;
+        if (s.errCol){
+          const ev = r[s.errCol];
+          if (typeof ev === "number" && !isNaN(ev) && ev > 0) e = ev;
+        }
+        return { x: r[xColumn], y: r[s.yCol], e };
+      })
+      .filter(p => typeof p.x !== "undefined" && typeof p.y === "number" && !isNaN(p.y) && (!isLog || p.y > 0))
+    );
+
+    // --- domains ---
+    let xMin, xMax;
+    if (xIsNumeric){
+      const xs = seriesPoints.flat().map(p => p.x);
+      xMin = Math.min(...xs); xMax = Math.max(...xs);
+      if (xMin === xMax) { xMin -= 1; xMax += 1; }
+    }
+    // Include error-bar extents so caps aren't clipped at the plot edges.
+    const ys = seriesPoints.flat().flatMap(p => {
+      if (p.e === null) return [p.y];
+      const lo = (isLog && p.y - p.e <= 0) ? p.y : p.y - p.e;
+      return [p.y, p.y + p.e, lo];
+    });
+    let yMin = Math.min(...ys), yMax = Math.max(...ys);
+    if (isLog){
+      yMin = Math.max(yMin, 1e-12);
+    } else {
+      const pad = (yMax - yMin) * 0.08 || Math.abs(yMax || 1) * 0.08;
+      yMin -= pad; yMax += pad;
+    }
+
+    // --- layout ---
+    const marginLeft = effFs * 4.6 + 14;
+    const marginRight = 12;
+    const marginBottom = effFs * 3.4;
+
+    // Precompute legend item widths and wrap them into lines so long/many
+    // trace labels never overflow the figure — needed before we know
+    // marginTop, since more legend lines means more space up top.
+    const legendAvailW = wPx - marginLeft - marginRight;
+    const legendSwatchW = fs * 1.8;
+    const legendItemGap = 16;
+    const legendLineH = fs * 1.7;
+    let legendLines = [[]]; // each entry: array of {label, color, shape, dash, width}
+    if (showLegend){
+      let curW = 0;
+      visible.forEach((s, i) => {
+        const label = s.label || s.yCol;
+        const textW = measureTextWidth(label, fs * 0.9, 400, family);
+        const itemW = legendSwatchW + 5 + textW + legendItemGap;
+        if (curW + itemW > legendAvailW && legendLines[legendLines.length-1].length > 0){
+          legendLines.push([]);
+          curW = 0;
+        }
+        legendLines[legendLines.length-1].push({ i, label, itemW });
+        curW += itemW;
+      });
+    }
+    const legendLineCount = showLegend ? legendLines.length : 0;
+
+    const marginTop = (includeTitle ? fsTitle * 1.8 : 0) + (showLegend ? 8 + legendLineCount * legendLineH : 8);
+    const plotW = Math.max(10, wPx - marginLeft - marginRight);
+    const plotH = Math.max(10, hPx - marginTop - marginBottom);
+    const x0 = marginLeft, y0 = marginTop;
+
+    const xPx = (xv) => {
+      if (xIsNumeric) return x0 + ((xv - xMin) / (xMax - xMin)) * plotW;
+      const idx = catValues.indexOf(xv);
+      return x0 + (catValues.length <= 1 ? plotW/2 : (idx / (catValues.length - 1)) * plotW);
+    };
+    const yPx = (yv) => {
+      if (isLog){
+        const t = (Math.log10(yv) - Math.log10(yMin)) / (Math.log10(yMax) - Math.log10(yMin));
+        return y0 + plotH - t * plotH;
+      }
+      return y0 + plotH - ((yv - yMin) / (yMax - yMin)) * plotH;
+    };
+
+    // --- ticks ---
+    const xTicks = xIsNumeric ? niceTicks(xMin, xMax, 6) : catValues;
+    const yTicks = isLog ? logTicks(yMin, yMax) : niceTicks(yMin, yMax, 5);
+
+    // --- marker size ---
+    // A fixed marker radius looked fine at large preview sizes but, once
+    // exported at a small figure size (e.g. 3.3in single-column) with
+    // many data points, adjacent markers overlapped so heavily they
+    // fused into a solid ribbon instead of showing distinct points.
+    // Scale the radius down to the tightest gap between consecutive x
+    // positions so markers stay visually separated at any export size,
+    // while still capping at a comfortable maximum for sparse data.
+    const allXValues = xIsNumeric
+      ? [...new Set(seriesPoints.flat().map(p => p.x))].sort((a, b) => a - b)
+      : catValues;
+    let tightestGap = Infinity;
+    for (let i = 1; i < allXValues.length; i++){
+      const gap = Math.abs(xPx(allXValues[i]) - xPx(allXValues[i - 1]));
+      if (gap > 0 && gap < tightestGap) tightestGap = gap;
+    }
+    const markerR = isFinite(tightestGap)
+      ? Math.max(1.3, Math.min(fs * 0.42, tightestGap * 0.38))
+      : fs * 0.42;
+
+    let svg = [];
+    svg.push(`<svg xmlns="${SVG_NS}" width="${pubSettings.widthIn}in" height="${pubSettings.heightIn}in" viewBox="0 0 ${fmtNum(wPx)} ${fmtNum(hPx)}" font-family="${family}">`);
+    svg.push(`<rect x="0" y="0" width="${fmtNum(wPx)}" height="${fmtNum(hPx)}" fill="#ffffff"/>`);
+
+    if (includeTitle){
+      svg.push(`<text x="${fmtNum(wPx/2)}" y="${fmtNum(fsTitle*1.2)}" text-anchor="middle" font-size="${fmtNum(fsTitle)}" font-weight="600" fill="#1b1f27">${escapeXML($("#chartTitle").value)}</text>`);
+    }
+
+    // grid
+    if (showGrid){
+      yTicks.forEach(t => {
+        const py = yPx(t);
+        svg.push(`<line x1="${fmtNum(x0)}" y1="${fmtNum(py)}" x2="${fmtNum(x0+plotW)}" y2="${fmtNum(py)}" stroke="#000000" stroke-opacity="0.1" stroke-width="0.75"/>`);
+      });
+      if (xIsNumeric) xTicks.forEach(t => {
+        const px = xPx(t);
+        svg.push(`<line x1="${fmtNum(px)}" y1="${fmtNum(y0)}" x2="${fmtNum(px)}" y2="${fmtNum(y0+plotH)}" stroke="#000000" stroke-opacity="0.1" stroke-width="0.75"/>`);
+      });
+    }
+
+    // axes lines
+    svg.push(`<line x1="${fmtNum(x0)}" y1="${fmtNum(y0+plotH)}" x2="${fmtNum(x0+plotW)}" y2="${fmtNum(y0+plotH)}" stroke="#1b1f27" stroke-width="${fmtNum(PT_TO_PX)}"/>`);
+    svg.push(`<line x1="${fmtNum(x0)}" y1="${fmtNum(y0)}" x2="${fmtNum(x0)}" y2="${fmtNum(y0+plotH)}" stroke="#1b1f27" stroke-width="${fmtNum(PT_TO_PX)}"/>`);
+
+    // ticks + labels
+    const tickLen = 4;
+    xTicks.forEach(t => {
+      const px = xPx(t);
+      svg.push(`<line x1="${fmtNum(px)}" y1="${fmtNum(y0+plotH)}" x2="${fmtNum(px)}" y2="${fmtNum(y0+plotH+tickLen)}" stroke="#1b1f27" stroke-width="1"/>`);
+      const xLabel = xIsNumeric ? fmtNum(t) : String(t);
+      svg.push(`<text x="${fmtNum(px)}" y="${fmtNum(y0+plotH+tickLen+axisFsTick)}" text-anchor="middle" font-size="${fmtNum(axisFsTick)}" fill="#1b1f27">${escapeXML(xLabel)}</text>`);
+    });
+    yTicks.forEach(t => {
+      const py = yPx(t);
+      svg.push(`<line x1="${fmtNum(x0-tickLen)}" y1="${fmtNum(py)}" x2="${fmtNum(x0)}" y2="${fmtNum(py)}" stroke="#1b1f27" stroke-width="1"/>`);
+      const label = isLog ? "1e" + Math.round(Math.log10(t)) : fmtNum(t);
+      svg.push(`<text x="${fmtNum(x0-tickLen-4)}" y="${fmtNum(py+axisFsTick*0.32)}" text-anchor="end" font-size="${fmtNum(axisFsTick)}" fill="#1b1f27">${escapeXML(label)}</text>`);
+    });
+
+    // axis titles
+    svg.push(`<text x="${fmtNum(x0+plotW/2)}" y="${fmtNum(hPx - axisFsLabel*0.3)}" text-anchor="middle" font-size="${fmtNum(axisFsLabel)}" font-weight="600" fill="#1b1f27">${escapeXML(xAxisText)}</text>`);
+    svg.push(`<text x="${fmtNum(axisFsLabel*0.9)}" y="${fmtNum(y0+plotH/2)}" text-anchor="middle" font-size="${fmtNum(axisFsLabel)}" font-weight="600" fill="#1b1f27" transform="rotate(-90 ${fmtNum(axisFsLabel*0.9)} ${fmtNum(y0+plotH/2)})">${escapeXML(yAxisText)}</text>`);
+
+    // data
+    visible.forEach((s, i) => {
+      const pts = seriesPoints[i];
+      if (!pts.length) return;
+      const dash = pubSettings.distinctDashes ? dashArrayFor(s.dashKey) : [];
+      const shape = pubSettings.distinctMarkers ? MARKER_SHAPES[i % MARKER_SHAPES.length] : "circle";
+      const dashAttr = dash.length ? ` stroke-dasharray="${dash.join(",")}"` : "";
+      const path = pts.map((p, j) => (j===0?"M":"L") + fmtNum(xPx(p.x)) + " " + fmtNum(yPx(p.y))).join(" ");
+
+      // error bars first, so the line/markers draw on top of them
+      pts.forEach(p => {
+        if (p.e === null) return;
+        const yHi = p.y + p.e;
+        const yLo = (isLog && p.y - p.e <= 0) ? yMin : p.y - p.e;
+        const px = xPx(p.x), pyTop = yPx(yHi), pyBot = yPx(yLo);
+        const capW = markerR * 1.3;
+        svg.push(`<line x1="${fmtNum(px)}" y1="${fmtNum(pyTop)}" x2="${fmtNum(px)}" y2="${fmtNum(pyBot)}" stroke="${s.color}" stroke-width="1"/>`);
+        svg.push(`<line x1="${fmtNum(px-capW)}" y1="${fmtNum(pyTop)}" x2="${fmtNum(px+capW)}" y2="${fmtNum(pyTop)}" stroke="${s.color}" stroke-width="1"/>`);
+        svg.push(`<line x1="${fmtNum(px-capW)}" y1="${fmtNum(pyBot)}" x2="${fmtNum(px+capW)}" y2="${fmtNum(pyBot)}" stroke="${s.color}" stroke-width="1"/>`);
+      });
+
+      svg.push(`<path d="${path}" fill="none" stroke="${s.color}" stroke-width="${fmtNum(lw)}"${dashAttr} stroke-linecap="round" stroke-linejoin="round"/>`);
+      if ($("#showPoints").checked){
+        pts.forEach(p => svg.push(drawMarkerSVG(shape, xPx(p.x), yPx(p.y), markerR, s.color)));
+      }
+    });
+
+    // legend (wrapped across lines, computed above in legendLines)
+    if (showLegend){
+      const legendTop = includeTitle ? fsTitle * 1.9 : fs * 1.4;
+      legendLines.forEach((line, lineIdx) => {
+        const legendY = legendTop + lineIdx * legendLineH;
+        let lx = x0;
+        line.forEach(({ i, label, itemW }) => {
+          const shape = pubSettings.distinctMarkers ? MARKER_SHAPES[i % MARKER_SHAPES.length] : "circle";
+          const dash = pubSettings.distinctDashes ? dashArrayFor(visible[i].dashKey) : [];
+          const dashAttr = dash.length ? ` stroke-dasharray="${dash.join(",")}"` : "";
+          const color = visible[i].color;
+          svg.push(`<line x1="${fmtNum(lx)}" y1="${fmtNum(legendY)}" x2="${fmtNum(lx+legendSwatchW)}" y2="${fmtNum(legendY)}" stroke="${color}" stroke-width="${fmtNum(lw)}"${dashAttr}/>`);
+          svg.push(drawMarkerSVG(shape, lx+legendSwatchW/2, legendY, fs*0.42, color));
+          svg.push(`<text x="${fmtNum(lx+legendSwatchW+5)}" y="${fmtNum(legendY+fs*0.32)}" font-size="${fmtNum(fs*0.9)}" fill="#1b1f27">${escapeXML(label)}</text>`);
+          lx += itemW;
+        });
+      });
+    }
+
+    svg.push(`</svg>`);
+    return svg.join("\n");
+  }
+
+  function escapeXML(str){
+    return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  }
+
+  $("#exportSvgBtn").addEventListener("click", () => {
+    if (!rows.length) return;
+    const svgStr = generateSVG();
+    const blob = new Blob([svgStr], { type: "image/svg+xml" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.download = ($("#chartTitle").value || "channel-bench").replace(/\s+/g, "_") + ".svg";
+    link.href = url;
+    link.click();
+    URL.revokeObjectURL(url);
+  });
+
+  // ---------- init ----------
+  $("#parseBtn").click();
+})();
+</script>
+</body>
+</html>
