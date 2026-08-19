@@ -1,4 +1,4 @@
-# Quantum Channel Discrimination under Causal Constraints
+# Semidefinite Programming for Quantum Channel Discrimination
 
 This repository contains the numerical infrastructure for evaluating quantum channel discrimination under different causal structures. It provides a complete pipeline to formulate semidefinite programs (SDPs) for nine distinct causal classes, solve them at scale on a SLURM-managed cluster, and process, analyze, and visualize the resulting datasets.
 
